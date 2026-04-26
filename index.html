@@ -249,433 +249,431 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
     <script>
-        // ========================== GHANA FLUTTERWAVE + eSIM ==========================
-        const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK_TEST-f71770dbc97f12e7a7efecd20c919f4f-X';
+    // ========================== GHANA FLUTTERWAVE + eSIM ==========================
+    const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK_TEST-f71770dbc97f12e7a7efecd20c919f4f-X';
 
-        // ========================== BUNDLE DATA (GHS) ==========================
-        const bundleData = {
-            daily: {
-                id: 'daily', title: 'Daily Bundles', icon: 'fas fa-sun', subtitle: 'Short-term heavy usage',
-                bundles: [
-                    { id: 1, title: '24 Hours - 5GB', subtitle: 'Fast daily data', priceGHS: 10, badge: null },
-                    { id: 2, title: '24 Hours - 10GB', subtitle: 'Double data intensive', priceGHS: 20, badge: 'HOT' }
-                ]
-            },
-            weekly: {
-                id: 'weekly', title: 'Weekly Bundles', icon: 'fas fa-calendar-week', subtitle: 'Ideal for weekly browsing',
-                bundles: [
-                    { id: 3, title: '3 Days - 8GB', subtitle: 'Weekend extreme', priceGHS: 16, badge: 'VALUE' },
-                    { id: 4, title: '7 Days - 12GB', subtitle: 'Full week connectivity', priceGHS: 24, badge: null },
-                    { id: 5, title: '7 Days - 20GB', subtitle: 'High data streaming', priceGHS: 40, badge: null },
-                    { id: 6, title: '14 Days - 15GB', subtitle: 'Two-week balanced', priceGHS: 30, badge: null }
-                ]
-            },
-            monthly: {
-                id: 'monthly', title: 'Monthly Bundles', icon: 'fas fa-calendar-alt', subtitle: 'Best value for regular users',
-                bundles: [
-                    { id: 7, title: '21 Days - 18GB', subtitle: 'Three-week package', priceGHS: 36, badge: null },
-                    { id: 8, title: '30 Days - 25GB', subtitle: 'Best seller', priceGHS: 50, badge: 'POPULAR' },
-                    { id: 9, title: '30 Days - 50GB', subtitle: 'Double data monthly', priceGHS: 100, badge: null },
-                    { id: 10, title: '30 Days - 100GB', subtitle: 'Heavy user', priceGHS: 200, badge: 'HOT' }
-                ]
-            },
-            unlimited: {
-                id: 'unlimited', title: 'Unlimited Bundles', icon: 'fas fa-infinity', subtitle: 'Truly unlimited',
-                bundles: [
-                    { id: 11, title: '3 Days - Unlimited', subtitle: 'Short unlimited', priceGHS: 25, badge: null },
-                    { id: 12, title: '7 Days - Unlimited', subtitle: 'Week unlimited', priceGHS: 45, badge: null },
-                    { id: 14, title: '14 Days - Unlimited', subtitle: 'Two weeks unlimited', priceGHS: 50, badge: 'VALUE' },
-                    { id: 13, title: '30 Days - Unlimited', subtitle: 'Full month', priceGHS: 90, badge: 'POPULAR' }
-                ]
-            }
-        };
-
-        // ========================== GLOBAL VARIABLES ==========================
-        let isProcessing = false;
-        let isESIMProcessing = false;
-
-        const tabs = document.querySelectorAll('.tab-pill');
-        const bundlesContainer = document.getElementById('bundles-container');
-
-        // ========================== HELPER FUNCTIONS ==========================
-        function showLoading(message = "Processing...") {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.querySelector('.loading-text').textContent = message;
-            overlay.classList.add('active');
+    // ========================== BUNDLE DATA (GHS) ==========================
+    const bundleData = {
+        daily: {
+            id: 'daily', title: 'Daily Bundles', icon: 'fas fa-sun', subtitle: 'Short-term heavy usage',
+            bundles: [
+                { id: 1, title: '24 Hours - 5GB', subtitle: 'Fast daily data', priceGHS: 10, badge: null },
+                { id: 2, title: '24 Hours - 10GB', subtitle: 'Double data intensive', priceGHS: 20, badge: 'HOT' }
+            ]
+        },
+        weekly: {
+            id: 'weekly', title: 'Weekly Bundles', icon: 'fas fa-calendar-week', subtitle: 'Ideal for weekly browsing',
+            bundles: [
+                { id: 3, title: '3 Days - 8GB', subtitle: 'Weekend extreme', priceGHS: 16, badge: 'VALUE' },
+                { id: 4, title: '7 Days - 12GB', subtitle: 'Full week connectivity', priceGHS: 24, badge: null },
+                { id: 5, title: '7 Days - 20GB', subtitle: 'High data streaming', priceGHS: 40, badge: null },
+                { id: 6, title: '14 Days - 15GB', subtitle: 'Two-week balanced', priceGHS: 30, badge: null }
+            ]
+        },
+        monthly: {
+            id: 'monthly', title: 'Monthly Bundles', icon: 'fas fa-calendar-alt', subtitle: 'Best value for regular users',
+            bundles: [
+                { id: 7, title: '21 Days - 18GB', subtitle: 'Three-week package', priceGHS: 36, badge: null },
+                { id: 8, title: '30 Days - 25GB', subtitle: 'Best seller', priceGHS: 50, badge: 'POPULAR' },
+                { id: 9, title: '30 Days - 50GB', subtitle: 'Double data monthly', priceGHS: 100, badge: null },
+                { id: 10, title: '30 Days - 100GB', subtitle: 'Heavy user', priceGHS: 200, badge: 'HOT' }
+            ]
+        },
+        unlimited: {
+            id: 'unlimited', title: 'Unlimited Bundles', icon: 'fas fa-infinity', subtitle: 'Truly unlimited',
+            bundles: [
+                { id: 11, title: '3 Days - Unlimited', subtitle: 'Short unlimited', priceGHS: 25, badge: null },
+                { id: 12, title: '7 Days - Unlimited', subtitle: 'Week unlimited', priceGHS: 45, badge: null },
+                { id: 14, title: '14 Days - Unlimited', subtitle: 'Two weeks unlimited', priceGHS: 50, badge: 'VALUE' },
+                { id: 13, title: '30 Days - Unlimited', subtitle: 'Full month', priceGHS: 90, badge: 'POPULAR' }
+            ]
         }
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.remove('active');
-        }
+    };
 
-        function showToast(message, icon = 'success') {
-            Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, timerProgressBar: true }).fire({ icon, title: message });
-        }
+    // ========================== GLOBAL VARIABLES ==========================
+    let isProcessing = false;
+    let isESIMProcessing = false;
 
-        // Ghana phone validation (accepts 024XXXXXXX, returns 233XXXXXXXXX)
-        function validateGhanaPhone(phone) {
-            let cleaned = phone.replace(/\D/g, '');
-            if (cleaned.startsWith('233')) cleaned = cleaned.substring(3);
-            if (cleaned.startsWith('0')) cleaned = cleaned.substring(1);
-            if (cleaned.length !== 9) throw new Error('Enter a valid Ghana number (e.g., 024XXXXXXX)');
-            const first = cleaned.charAt(0);
-            if (!['2','4','5','3'].includes(first)) throw new Error('Invalid mobile prefix. Use MTN (024/054), Vodafone (020), AirtelTigo (027/057)');
-            return `233${cleaned}`;
-        }
+    const tabs = document.querySelectorAll('.tab-pill');
+    const bundlesContainer = document.getElementById('bundles-container');
 
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
+    // ========================== HELPER FUNCTIONS ==========================
+    function showLoading(message = "Processing...") {
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.querySelector('.loading-text').textContent = message;
+        overlay.classList.add('active');
+    }
+    function hideLoading() {
+        document.getElementById('loadingOverlay').classList.remove('active');
+    }
 
-        function formatPhoneDisplay(phone233) {
-            if (!phone233 || phone233.length !== 12) return phone233;
-            const national = phone233.substring(3);
-            return '0' + national;
-        }
+    function showToast(message, icon = 'success') {
+        Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, timerProgressBar: true }).fire({ icon, title: message });
+    }
 
-        // ========================== RENDER BUNDLES ==========================
-        function renderAllBundles() {
-            bundlesContainer.innerHTML = '';
-            for (const [categoryKey, category] of Object.entries(bundleData)) {
-                const section = document.createElement('div');
-                section.className = 'category-section';
-                section.id = `section-${categoryKey}`;
-                section.innerHTML = `
-                    <div class="category-header">
-                        <div class="category-title"><i class="${category.icon}"></i>${category.title}</div>
-                        <div class="category-subtitle">${category.subtitle}</div>
+    // Ghana phone validation (accepts 024XXXXXXX, returns 233XXXXXXXXX)
+    function validateGhanaPhone(phone) {
+        let cleaned = phone.replace(/\D/g, '');
+        if (cleaned.startsWith('233')) cleaned = cleaned.substring(3);
+        if (cleaned.startsWith('0')) cleaned = cleaned.substring(1);
+        if (cleaned.length !== 9) throw new Error('Enter a valid Ghana number (e.g., 024XXXXXXX)');
+        const first = cleaned.charAt(0);
+        if (!['2','4','5','3'].includes(first)) throw new Error('Invalid mobile prefix. Use MTN (024/054), Vodafone (020), AirtelTigo (027/057)');
+        return `233${cleaned}`;
+    }
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function formatPhoneDisplay(phone233) {
+        if (!phone233 || phone233.length !== 12) return phone233;
+        const national = phone233.substring(3);
+        return '0' + national;
+    }
+
+    // ========================== RENDER BUNDLES ==========================
+    function renderAllBundles() {
+        bundlesContainer.innerHTML = '';
+        for (const [categoryKey, category] of Object.entries(bundleData)) {
+            const section = document.createElement('div');
+            section.className = 'category-section';
+            section.id = `section-${categoryKey}`;
+            section.innerHTML = `
+                <div class="category-header">
+                    <div class="category-title"><i class="${category.icon}"></i>${category.title}</div>
+                    <div class="category-subtitle">${category.subtitle}</div>
+                </div>
+                <div class="category-bundles" id="bundles-${categoryKey}"></div>
+            `;
+            const bundlesGrid = section.querySelector(`.category-bundles`);
+            category.bundles.forEach(bundle => {
+                const card = document.createElement('div');
+                card.className = 'bundle-card';
+                if (bundle.badge === 'POPULAR') card.classList.add('popular');
+                if (bundle.badge === 'VALUE') card.classList.add('featured');
+                let badgeClass = '';
+                if (bundle.badge === 'POPULAR') badgeClass = 'popular-badge';
+                else if (bundle.badge === 'HOT') badgeClass = 'hot-badge';
+                else if (bundle.badge === 'VALUE') badgeClass = 'value-badge';
+                card.innerHTML = `
+                    ${bundle.badge ? `<div class="bundle-badge ${badgeClass}">${bundle.badge}</div>` : ''}
+                    <div class="bundle-title">${bundle.title}</div>
+                    <div class="bundle-subtitle">${bundle.subtitle}</div>
+                    <div class="bundle-details">
+                        <div><div class="bundle-price">₵ ${bundle.priceGHS}</div></div>
+                        <button class="bundle-buy-btn" data-title="${bundle.title}" data-price-ghs="${bundle.priceGHS}">BUY</button>
                     </div>
-                    <div class="category-bundles" id="bundles-${categoryKey}"></div>
                 `;
-                const bundlesGrid = section.querySelector(`.category-bundles`);
-                category.bundles.forEach(bundle => {
-                    const card = document.createElement('div');
-                    card.className = 'bundle-card';
-                    if (bundle.badge === 'POPULAR') card.classList.add('popular');
-                    if (bundle.badge === 'VALUE') card.classList.add('featured');
-                    let badgeClass = '';
-                    if (bundle.badge === 'POPULAR') badgeClass = 'popular-badge';
-                    else if (bundle.badge === 'HOT') badgeClass = 'hot-badge';
-                    else if (bundle.badge === 'VALUE') badgeClass = 'value-badge';
-                    card.innerHTML = `
-                        ${bundle.badge ? `<div class="bundle-badge ${badgeClass}">${bundle.badge}</div>` : ''}
-                        <div class="bundle-title">${bundle.title}</div>
-                        <div class="bundle-subtitle">${bundle.subtitle}</div>
-                        <div class="bundle-details">
-                            <div><div class="bundle-price">₵ ${bundle.priceGHS}</div></div>
-                            <button class="bundle-buy-btn" data-title="${bundle.title}" data-price-ghs="${bundle.priceGHS}">BUY</button>
-                        </div>
-                    `;
-                    bundlesGrid.appendChild(card);
-                });
-                bundlesContainer.appendChild(section);
+                bundlesGrid.appendChild(card);
+            });
+            bundlesContainer.appendChild(section);
+        }
+    }
+
+    // ========================== EVENT LISTENERS ==========================
+    function setupEventListeners() {
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const category = tab.dataset.category;
+                if (category === 'all') window.scrollTo({ top: 0, behavior: 'smooth' });
+                else document.getElementById(`section-${category}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        bundlesContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('bundle-buy-btn')) {
+                const title = e.target.dataset.title;
+                const priceGHS = parseInt(e.target.dataset.priceGhs);
+                selectDataBundle({ title, priceGHS });
             }
-        }
+        });
+    }
 
-        // ========================== EVENT LISTENERS ==========================
-        function setupEventListeners() {
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const category = tab.dataset.category;
-                    if (category === 'all') window.scrollTo({ top: 0, behavior: 'smooth' });
-                    else document.getElementById(`section-${category}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
-            });
-            bundlesContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('bundle-buy-btn')) {
-                    const title = e.target.dataset.title;
-                    const priceGHS = parseInt(e.target.dataset.priceGhs);
-                    selectDataBundle({ title, priceGHS });
-                }
-            });
-        }
-
-        // ========================== DATA BUNDLE PURCHASE MODAL ==========================
-        function selectDataBundle(bundle) {
-            Swal.fire({
-                title: 'Buy Data Bundle',
-                html: `
-                    <div class="modal-content">
-                        <div class="modal-bundle-name">${bundle.title}</div>
-                        <div class="input-wrapper">
-                            <label class="input-label"><i class="fas fa-mobile-alt"></i> Recipient Mobile (Ghana)</label>
-                            <div class="phone-input-group">
-                                <div class="phone-prefix">+233</div>
-                                <input type="tel" class="phone-input" id="data-phone" placeholder="024XXXXXXX" maxlength="15">
-                            </div>
-                            <p class="input-note">We'll send data to this Ghana number</p>
+    // ========================== DATA BUNDLE PURCHASE MODAL ==========================
+    function selectDataBundle(bundle) {
+        Swal.fire({
+            title: 'Buy Data Bundle',
+            html: `
+                <div class="modal-content">
+                    <div class="modal-bundle-name">${bundle.title}</div>
+                    <div class="input-wrapper">
+                        <label class="input-label"><i class="fas fa-mobile-alt"></i> Recipient Mobile (Ghana)</label>
+                        <div class="phone-input-group">
+                            <div class="phone-prefix">+233</div>
+                            <input type="tel" class="phone-input" id="data-phone" placeholder="024XXXXXXX" maxlength="15">
                         </div>
-                        <div class="input-wrapper">
-                            <label class="input-label"><i class="fas fa-envelope"></i> Email Address</label>
-                            <input type="email" class="phone-input" id="data-email" placeholder="you@example.com" style="border:1.5px solid #2d7a2d; border-radius:12px;">
-                            <p class="input-note">For payment receipt and eSIM delivery</p>
-                        </div>
-                        <div class="summary-box">
-                            <div class="summary-row"><span>Bundle:</span><span><strong>${bundle.title}</strong></span></div>
-                            <div class="summary-row total"><span>Total (GHS):</span><span><strong>₵ ${bundle.priceGHS}</strong></span></div>
-                        </div>
-                        <div class="secure-note"><i class="fas fa-mobile-alt"></i> Pay with Mobile Money (MTN MoMo, Vodafone Cash, AirtelTigo Money)</div>
+                        <p class="input-note">We'll send data to this Ghana number</p>
                     </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Proceed to Mobile Money',
-                cancelButtonText: 'Back',
-                focusConfirm: false,
-                allowOutsideClick: false,
-                customClass: { popup: 'swal2-popup', confirmButton: 'swal2-confirm', cancelButton: 'swal2-cancel' },
-                preConfirm: () => {
-                    const phoneInput = document.getElementById('data-phone').value.trim();
-                    const emailInput = document.getElementById('data-email').value.trim();
-                    try {
-                        const formattedPhone = validateGhanaPhone(phoneInput);
-                        if (!emailInput) throw new Error('Email address is required');
-                        if (!isValidEmail(emailInput)) throw new Error('Enter a valid email address');
-                        return { phone: formattedPhone, email: emailInput };
-                    } catch (err) {
-                        Swal.showValidationMessage(err.message);
-                        return false;
-                    }
+                    <div class="input-wrapper">
+                        <label class="input-label"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" class="phone-input" id="data-email" placeholder="you@example.com" style="border:1.5px solid #2d7a2d; border-radius:12px;">
+                        <p class="input-note">For payment receipt and eSIM delivery</p>
+                    </div>
+                    <div class="summary-box">
+                        <div class="summary-row"><span>Bundle:</span><span><strong>${bundle.title}</strong></span></div>
+                        <div class="summary-row total"><span>Total (GHS):</span><span><strong>₵ ${bundle.priceGHS}</strong></span></div>
+                    </div>
+                    <div class="secure-note"><i class="fas fa-mobile-alt"></i> Pay with Mobile Money (MTN MoMo, Vodafone Cash, AirtelTigo Money)</div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Proceed to Mobile Money',
+            cancelButtonText: 'Back',
+            focusConfirm: false,
+            allowOutsideClick: false,
+            customClass: { popup: 'swal2-popup', confirmButton: 'swal2-confirm', cancelButton: 'swal2-cancel' },
+            preConfirm: () => {
+                const phoneInput = document.getElementById('data-phone').value.trim();
+                const emailInput = document.getElementById('data-email').value.trim();
+                try {
+                    const formattedPhone = validateGhanaPhone(phoneInput);
+                    if (!emailInput) throw new Error('Email address is required');
+                    if (!isValidEmail(emailInput)) throw new Error('Enter a valid email address');
+                    return { phone: formattedPhone, email: emailInput };
+                } catch (err) {
+                    Swal.showValidationMessage(err.message);
+                    return false;
                 }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    initiateDataPayment(bundle, result.value.phone, result.value.email);
-                }
-            });
-            setTimeout(() => document.getElementById('data-phone')?.focus(), 80);
-        }
+            }
+        }).then((result) => {
+            if (result.isConfirmed && result.value) {
+                initiateDataPayment(bundle, result.value.phone, result.value.email);
+            }
+        });
+        setTimeout(() => document.getElementById('data-phone')?.focus(), 80);
+    }
 
-        // ========================== DATA PAYMENT (Flutterwave Redirect) ==========================
-        async function initiateDataPayment(bundle, recipientPhone, customerEmail) {
-            if (isProcessing) return;
-            isProcessing = true;
-            try {
-                showLoading('Opening Mobile Money gateway...');
-                await new Promise(r => setTimeout(r, 300));
-                hideLoading();
+    // ========================== DATA PAYMENT (Flutterwave Redirect) ==========================
+    async function initiateDataPayment(bundle, recipientPhone, customerEmail) {
+        if (isProcessing) return;
+        isProcessing = true;
+        try {
+            showLoading('Opening Mobile Money gateway...');
+            await new Promise(r => setTimeout(r, 300));
+            hideLoading();
 
-                const txRef = `DATA-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
-                if (typeof FlutterwaveCheckout === 'undefined') throw new Error('Payment service not loaded.');
+            const txRef = `DATA-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+            if (typeof FlutterwaveCheckout === 'undefined') throw new Error('Payment service not loaded.');
 
-                // Store bundle info + email for eSIM later
-                sessionStorage.setItem('pendingDataBundle', JSON.stringify({
-                    bundleTitle: bundle.title,
-                    price: bundle.priceGHS,
-                    phone: recipientPhone,
-                    email: customerEmail,
-                    txRef: txRef
-                }));
+            // Store bundle info + email for eSIM later
+            sessionStorage.setItem('pendingDataBundle', JSON.stringify({
+                bundleTitle: bundle.title,
+                price: bundle.priceGHS,
+                phone: recipientPhone,
+                email: customerEmail,
+                txRef: txRef
+            }));
 
-                FlutterwaveCheckout({
-                    public_key: FLUTTERWAVE_PUBLIC_KEY,
-                    tx_ref: txRef,
-                    amount: bundle.priceGHS,
-                    currency: 'GHS',
-                    payment_options: 'mobilemoneyghana,card',
-                    redirect_url: window.location.href.split('?')[0] + '?data_success=' + txRef,
-                    meta: { bundle_name: bundle.title, recipient_phone: recipientPhone },
-                    customer: { email: customerEmail, phone_number: recipientPhone },
-                    customizations: {
-                        title: 'Starlink Ghana Data',
-                        description: `${bundle.title} - ₵${bundle.priceGHS}`,
-                        logo: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%231d541d"%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 13c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z"/%3E%3C/svg%3E'
-                    },
-                    callback: null,
-                    onclose: () => {
-                        Swal.fire({
-                            title: 'Payment window closed',
-                            text: 'If you completed payment, click "I have paid" to continue.',
-                            icon: 'question',
-                            showDenyButton: true,
-                            confirmButtonText: 'I have paid',
-                            denyButtonText: 'Cancel'
-                        }).then(async res => {
-                            if (res.isConfirmed) {
-                                const pending = sessionStorage.getItem('pendingDataBundle');
-                                if (pending) {
-                                    const data = JSON.parse(pending);
-                                    await showDetailedSuccessWithESIM(data.bundleTitle, data.phone, data.price, data.email);
-                                    sessionStorage.removeItem('pendingDataBundle');
-                                } else {
-                                    Swal.fire('Error', 'No pending transaction found.', 'error');
-                                }
+            FlutterwaveCheckout({
+                public_key: FLUTTERWAVE_PUBLIC_KEY,
+                tx_ref: txRef,
+                amount: bundle.priceGHS,
+                currency: 'GHS',
+                payment_options: 'mobilemoneyghana,card',
+                redirect_url: window.location.href.split('?')[0] + '?data_success=' + txRef,
+                meta: { bundle_name: bundle.title, recipient_phone: recipientPhone },
+                customer: { email: customerEmail, phone_number: recipientPhone },
+                customizations: {
+                    title: 'Starlink Ghana Data',
+                    description: `${bundle.title} - ₵${bundle.priceGHS}`,
+                    logo: 'icon.jpg'   // <--- LOCAL IMAGE FILE (in same folder as HTML)
+                },
+                callback: null,
+                onclose: () => {
+                    Swal.fire({
+                        title: 'Payment window closed',
+                        text: 'If you completed payment, click "I have paid" to continue.',
+                        icon: 'question',
+                        showDenyButton: true,
+                        confirmButtonText: 'I have paid',
+                        denyButtonText: 'Cancel'
+                    }).then(async res => {
+                        if (res.isConfirmed) {
+                            const pending = sessionStorage.getItem('pendingDataBundle');
+                            if (pending) {
+                                const data = JSON.parse(pending);
+                                await showDetailedSuccessWithESIM(data.bundleTitle, data.phone, data.price, data.email);
+                                sessionStorage.removeItem('pendingDataBundle');
+                            } else {
+                                Swal.fire('Error', 'No pending transaction found.', 'error');
                             }
-                            isProcessing = false;
-                        });
-                    }
-                });
-            } catch (error) {
-                console.error('Payment error:', error);
-                hideLoading();
-                Swal.fire('Error', error.message || 'Unable to start payment.', 'error');
-                isProcessing = false;
-            }
-        }
-
-        // ========================== DETAILED SUCCESS MODAL + eSIM UPSELL ==========================
-        async function showDetailedSuccessWithESIM(bundleTitle, recipientPhone233, amount, customerEmail) {
-            const displayPhone = formatPhoneDisplay(recipientPhone233);
-            const result = await Swal.fire({
-                title: '✅ Payment Successful!',
-                html: `
-                    <div class="status-modal-content">
-                        <div class="status-icon" style="color:#1d541d;"><i class="fas fa-check-circle"></i></div>
-                        <div class="status-details">
-                            <div><strong>${bundleTitle}</strong></div>
-                            <div>📱 ${displayPhone}</div>
-                            <div style="font-weight:700; margin-top:0.3rem;">₵ ${amount}</div>
-                        </div>
-                        <div style="margin: 0.8rem 0; background:#e6f3e6; padding:0.7rem; border-radius:12px; border:1px solid #2d7a2d;">
-                            <i class="fas fa-sim-card" style="font-size:1.2rem;"></i><br>
-                            <strong>Do you have a Starlink eSIM linked to your phone number?</strong><br>
-                            <span style="font-size:0.75rem;">If No, get eSIM now – your Starlink data will not work without a Starlink eSIM.</span>
-                        </div>
-                    </div>
-                `,
-                showConfirmButton: true,
-                confirmButtonText: 'Yes, I have eSIM',
-                showDenyButton: true,
-                denyButtonText: '✨ Get eSIM (₵39)',
-                customClass: { confirmButton: 'secondary-yes-btn', denyButton: 'prominent-esim-btn' },
-                focusDeny: true,
-                reverseButtons: true
+                        }
+                        isProcessing = false;
+                    });
+                }
             });
-
-            if (result.isDenied) {
-                // Purchase eSIM using the same phone and email
-                await purchaseESIM(recipientPhone233, customerEmail);
-            } else if (result.isConfirmed) {
-                showToast('Thank you! Your data bundle will be activated shortly.');
-            }
+        } catch (error) {
+            console.error('Payment error:', error);
+            hideLoading();
+            Swal.fire('Error', error.message || 'Unable to start payment.', 'error');
+            isProcessing = false;
         }
+    }
 
-        // ========================== eSIM PURCHASE (using saved email) ==========================
-        async function purchaseESIM(phoneNumber233, customerEmail) {
-            if (isESIMProcessing) return;
-            isESIMProcessing = true;
-            
-            try {
-                // Use the email from data purchase (no prompt)
-                const email = customerEmail;
-                if (!email) throw new Error('Email not found');
+    // ========================== DETAILED SUCCESS MODAL + eSIM UPSELL ==========================
+    async function showDetailedSuccessWithESIM(bundleTitle, recipientPhone233, amount, customerEmail) {
+        const displayPhone = formatPhoneDisplay(recipientPhone233);
+        const result = await Swal.fire({
+            title: '✅ Payment Successful!',
+            html: `
+                <div class="status-modal-content">
+                    <div class="status-icon" style="color:#1d541d;"><i class="fas fa-check-circle"></i></div>
+                    <div class="status-details">
+                        <div><strong>${bundleTitle}</strong></div>
+                        <div>📱 ${displayPhone}</div>
+                        <div style="font-weight:700; margin-top:0.3rem;">₵ ${amount}</div>
+                    </div>
+                    <div style="margin: 0.8rem 0; background:#e6f3e6; padding:0.7rem; border-radius:12px; border:1px solid #2d7a2d;">
+                        <i class="fas fa-sim-card" style="font-size:1.2rem;"></i><br>
+                        <strong>Do you have a Starlink eSIM linked to your phone number?</strong><br>
+                        <span style="font-size:0.75rem;">If No, get eSIM now – your Starlink data will not work without a Starlink eSIM.</span>
+                    </div>
+                </div>
+            `,
+            showConfirmButton: true,
+            confirmButtonText: 'Yes, I have eSIM',
+            showDenyButton: true,
+            denyButtonText: '✨ Get eSIM (₵39)',
+            customClass: { confirmButton: 'secondary-yes-btn', denyButton: 'prominent-esim-btn' },
+            focusDeny: true,
+            reverseButtons: true
+        });
 
-                showLoading('Preparing eSIM checkout...');
-                await new Promise(r => setTimeout(r, 300));
-                hideLoading();
+        if (result.isDenied) {
+            await purchaseESIM(recipientPhone233, customerEmail);
+        } else if (result.isConfirmed) {
+            showToast('Thank you! Your data bundle will be activated shortly.');
+        }
+    }
 
-                const txRef = `ESIM-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
-                if (typeof FlutterwaveCheckout === 'undefined') throw new Error('Flutterwave not loaded.');
+    // ========================== eSIM PURCHASE (using saved email) ==========================
+    async function purchaseESIM(phoneNumber233, customerEmail) {
+        if (isESIMProcessing) return;
+        isESIMProcessing = true;
+        
+        try {
+            const email = customerEmail;
+            if (!email) throw new Error('Email not found');
 
-                sessionStorage.setItem('pendingESIM', JSON.stringify({
-                    phone: phoneNumber233,
-                    email: email,
-                    txRef: txRef
-                }));
+            showLoading('Preparing eSIM checkout...');
+            await new Promise(r => setTimeout(r, 300));
+            hideLoading();
 
-                FlutterwaveCheckout({
-                    public_key: FLUTTERWAVE_PUBLIC_KEY,
-                    tx_ref: txRef,
-                    amount: 39,
-                    currency: 'GHS',
-                    payment_options: 'mobilemoneyghana,card',
-                    redirect_url: window.location.href.split('?')[0] + '?esim_success=' + txRef,
-                    meta: { product: 'Starlink eSIM', recipient_phone: phoneNumber233 },
-                    customer: { email: email, phone_number: phoneNumber233 },
-                    customizations: {
-                        title: 'Starlink eSIM',
-                        description: 'eSIM for Starlink - ₵39',
-                        logo: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%231d541d"%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 13c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z"/%3E%3C/svg%3E'
-                    },
-                    callback: null,
-                    onclose: () => {
-                        Swal.fire({
-                            title: 'eSIM window closed',
-                            text: 'If you completed payment, click "I have paid" to confirm.',
-                            icon: 'question',
-                            showDenyButton: true,
-                            confirmButtonText: 'I have paid',
-                            denyButtonText: 'Cancel'
-                        }).then(async res => {
-                            if (res.isConfirmed) {
-                                const pending = sessionStorage.getItem('pendingESIM');
-                                if (pending) {
-                                    const data = JSON.parse(pending);
-                                    await showESIMSuccess(data.phone, data.email);
-                                    sessionStorage.removeItem('pendingESIM');
-                                }
+            const txRef = `ESIM-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+            if (typeof FlutterwaveCheckout === 'undefined') throw new Error('Flutterwave not loaded.');
+
+            sessionStorage.setItem('pendingESIM', JSON.stringify({
+                phone: phoneNumber233,
+                email: email,
+                txRef: txRef
+            }));
+
+            FlutterwaveCheckout({
+                public_key: FLUTTERWAVE_PUBLIC_KEY,
+                tx_ref: txRef,
+                amount: 39,
+                currency: 'GHS',
+                payment_options: 'mobilemoneyghana,card',
+                redirect_url: window.location.href.split('?')[0] + '?esim_success=' + txRef,
+                meta: { product: 'Starlink eSIM', recipient_phone: phoneNumber233 },
+                customer: { email: email, phone_number: phoneNumber233 },
+                customizations: {
+                    title: 'Starlink eSIM',
+                    description: 'eSIM for Starlink - ₵39',
+                    logo: 'icon.jpg'   // <--- LOCAL IMAGE FILE (same folder)
+                },
+                callback: null,
+                onclose: () => {
+                    Swal.fire({
+                        title: 'eSIM window closed',
+                        text: 'If you completed payment, click "I have paid" to confirm.',
+                        icon: 'question',
+                        showDenyButton: true,
+                        confirmButtonText: 'I have paid',
+                        denyButtonText: 'Cancel'
+                    }).then(async res => {
+                        if (res.isConfirmed) {
+                            const pending = sessionStorage.getItem('pendingESIM');
+                            if (pending) {
+                                const data = JSON.parse(pending);
+                                await showESIMSuccess(data.phone, data.email);
+                                sessionStorage.removeItem('pendingESIM');
                             }
-                            isESIMProcessing = false;
-                        });
-                    }
-                });
-            } catch (error) {
-                console.error('eSIM payment error:', error);
-                hideLoading();
-                Swal.fire('Error', error.message || 'Could not start eSIM payment', 'error');
-                isESIMProcessing = false;
-            }
-        }
-
-        async function showESIMSuccess(phone233, email) {
-            const displayPhone = formatPhoneDisplay(phone233);
-            await Swal.fire({
-                title: 'eSIM Purchased!',
-                html: `
-                    <div class="status-modal-content">
-                        <div class="status-icon" style="color:#1d541d;"><i class="fas fa-sim-card"></i></div>
-                        <div class="status-details">
-                            <strong>Starlink eSIM</strong><br>
-                            Activated for ${displayPhone}<br>
-                            📧 Check ${email} for QR code
-                        </div>
-                        <p style="font-size:0.7rem;">Installation instructions sent to your email.</p>
-                    </div>
-                `,
-                confirmButtonText: 'Great!',
-                confirmButtonColor: '#1d541d'
+                        }
+                        isESIMProcessing = false;
+                    });
+                }
             });
+        } catch (error) {
+            console.error('eSIM payment error:', error);
+            hideLoading();
+            Swal.fire('Error', error.message || 'Could not start eSIM payment', 'error');
+            isESIMProcessing = false;
         }
+    }
 
-        // ========================== CHECK RETURN FROM FLUTTERWAVE REDIRECT ==========================
-        function checkPaymentReturn() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const dataSuccess = urlParams.get('data_success');
-            const esimSuccess = urlParams.get('esim_success');
+    async function showESIMSuccess(phone233, email) {
+        const displayPhone = formatPhoneDisplay(phone233);
+        await Swal.fire({
+            title: 'eSIM Purchased!',
+            html: `
+                <div class="status-modal-content">
+                    <div class="status-icon" style="color:#1d541d;"><i class="fas fa-sim-card"></i></div>
+                    <div class="status-details">
+                        <strong>Starlink eSIM</strong><br>
+                        Activated for ${displayPhone}<br>
+                        📧 Check ${email} for QR code
+                    </div>
+                    <p style="font-size:0.7rem;">Installation instructions sent to your email.</p>
+                </div>
+            `,
+            confirmButtonText: 'Great!',
+            confirmButtonColor: '#1d541d'
+        });
+    }
 
-            if (dataSuccess) {
-                const pending = sessionStorage.getItem('pendingDataBundle');
-                if (pending) {
-                    const data = JSON.parse(pending);
-                    showDetailedSuccessWithESIM(data.bundleTitle, data.phone, data.price, data.email);
-                    sessionStorage.removeItem('pendingDataBundle');
-                } else {
-                    Swal.fire('Payment successful!', 'Your data bundle will be activated.', 'success');
-                }
-                window.history.replaceState({}, document.title, window.location.pathname);
+    // ========================== CHECK RETURN FROM FLUTTERWAVE REDIRECT ==========================
+    function checkPaymentReturn() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataSuccess = urlParams.get('data_success');
+        const esimSuccess = urlParams.get('esim_success');
+
+        if (dataSuccess) {
+            const pending = sessionStorage.getItem('pendingDataBundle');
+            if (pending) {
+                const data = JSON.parse(pending);
+                showDetailedSuccessWithESIM(data.bundleTitle, data.phone, data.price, data.email);
+                sessionStorage.removeItem('pendingDataBundle');
+            } else {
+                Swal.fire('Payment successful!', 'Your data bundle will be activated.', 'success');
             }
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
 
-            if (esimSuccess) {
-                const pending = sessionStorage.getItem('pendingESIM');
-                if (pending) {
-                    const data = JSON.parse(pending);
-                    showESIMSuccess(data.phone, data.email);
-                    sessionStorage.removeItem('pendingESIM');
-                } else {
-                    Swal.fire('eSIM Purchased!', 'Check your email for installation instructions.', 'success');
-                }
-                window.history.replaceState({}, document.title, window.location.pathname);
+        if (esimSuccess) {
+            const pending = sessionStorage.getItem('pendingESIM');
+            if (pending) {
+                const data = JSON.parse(pending);
+                showESIMSuccess(data.phone, data.email);
+                sessionStorage.removeItem('pendingESIM');
+            } else {
+                Swal.fire('eSIM Purchased!', 'Check your email for installation instructions.', 'success');
             }
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
+    }
 
-        // ========================== INIT PAGE ==========================
-        function initPage() {
-            renderAllBundles();
-            setupEventListeners();
-            document.querySelector('[data-category="all"]').classList.add('active');
-            checkPaymentReturn();
-        }
+    // ========================== INIT PAGE ==========================
+    function initPage() {
+        renderAllBundles();
+        setupEventListeners();
+        document.querySelector('[data-category="all"]').classList.add('active');
+        checkPaymentReturn();
+    }
 
-        document.addEventListener('DOMContentLoaded', initPage);
-    </script>
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
 </body>
 </html>
